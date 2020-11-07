@@ -4,6 +4,7 @@ namespace Edalzell\Forma;
 
 use Illuminate\Support\Facades\Route;
 use Statamic\CP\Navigation\Nav;
+use Statamic\Extend\Addon;
 use Statamic\Facades\CP\Nav as NavAPI;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
@@ -14,28 +15,32 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->bootNav();
-
-        Statamic::booted(fn () => $this->registerCpRoutes(fn () => $this->registerRoutes()));
+        Statamic::booted(function () {
+            $this->bootNav();
+            $this->registerCpRoutes(fn () => $this->registerRoutes());
+        });
     }
 
     private function bootNav()
     {
-        NavAPI::extend(fn (Nav $nav) => $nav->content('Config')
-            ->section(Forma::name())
-            ->route(Forma::getRoute('edit'))
-            ->icon('settings-horizontal')
-        );
+        Forma::addons()->each(function (Addon $addon) {
+            NavAPI::extend(fn (Nav $nav) => $nav->content('Config')
+                ->section($addon->name())
+                ->route($addon->handle().'.config.edit', ['handle' => $addon->handle()])
+                ->icon('settings-horizontal')
+            );
+        });
     }
 
     private function registerRoutes()
     {
-        if (Forma::isRegistered()) {
-            $handle = Forma::handle();
-            Route::name(Forma::getRouteNamePrefix())->prefix("{$handle}/config")->group(function () {
-                Route::get('edit', [ConfigController::class, 'edit'])->name('edit');
-                Route::post('update', [ConfigController::class, 'update'])->name('update');
+        Forma::addons()->each(function (Addon $addon) {
+            Route::name($addon->handle())->prefix('{handle}')->group(function () {
+                Route::name('.config.')->prefix('config')->group(function () {
+                    Route::get('edit', [ConfigController::class, 'edit'])->name('edit');
+                    Route::post('update', [ConfigController::class, 'update'])->name('update');
+                });
             });
-        }
+        });
     }
 }

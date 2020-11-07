@@ -2,48 +2,33 @@
 
 namespace Edalzell\Forma;
 
+use Illuminate\Support\Collection;
 use Statamic\Extend\Addon;
 use Statamic\Facades\Addon as AddonAPI;
 
 class Forma
 {
-    private static Addon $addon;
+    private static ?Collection $addons = null;
 
-    public static function registerAddon(string $package)
+    public static function registerAddon(string $package, $controllerClass = ConfigController::class)
     {
-        static::$addon = AddonAPI::get($package);
+        if (! static::$addons) {
+            static::$addons = collect();
+        }
+
+        if (! $addon = AddonAPI::get($package)) {
+            return;
+        }
+        static::$addons->put($addon->handle(), $addon);
     }
 
-    public static function isRegistered(): bool
+    public static function addons(): Collection
     {
-        return ! is_null(static::$addon);
+        return static::$addons;
     }
 
-    public static function directory(): string
+    public static function getAddon($handle): Addon
     {
-        return static::$addon->directory();
-    }
-
-    public static function handle(): string
-    {
-        return static::$addon->handle();
-    }
-
-    /**
-     * @return string
-     */
-    public static function name()
-    {
-        return static::$addon->name();
-    }
-
-    public static function getRoute($action): string
-    {
-        return static::getRouteNamePrefix().$action;
-    }
-
-    public static function getRouteNamePrefix(): string
-    {
-        return static::handle().'.config.';
+        return static::$addons->get($handle);
     }
 }

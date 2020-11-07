@@ -12,26 +12,26 @@ use Stillat\Proteus\Support\Facades\ConfigWriter;
 
 class ConfigController extends Controller
 {
-    public function edit()
+    public function edit(string $handle)
     {
-        $blueprint = $this->getBlueprint();
+        $blueprint = $this->getBlueprint($handle);
 
         $fields = $blueprint
             ->fields()
-            ->addValues($this->preProcess())
+            ->addValues($this->preProcess($handle))
             ->preProcess();
 
         return view('forma::edit', [
             'blueprint' => $blueprint->toPublishArray(),
             'meta' => $fields->meta(),
-            'route' => cp_route(Forma::getRoute('update')),
+            'route' => cp_route("{$handle}.config.update", ['handle' => $handle]),
             'values' => $fields->values(),
         ]);
     }
 
-    public function update(Request $request)
+    public function update(string $handle, Request $request)
     {
-        $blueprint = $this->getBlueprint();
+        $blueprint = $this->getBlueprint($handle);
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -43,9 +43,11 @@ class ConfigController extends Controller
         ConfigWriter::writeMany('mailchimp', $this->postProcess($fields->process()->values()->toArray()));
     }
 
-    private function getBlueprint(): Blueprint
+    private function getBlueprint(string $handle): Blueprint
     {
-        $path = Path::assemble(Forma::directory(), 'resources', 'blueprints', 'config.yaml');
+        $addon = Forma::getAddon($handle);
+
+        $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
 
         return BlueprintAPI::makeFromFields(YAML::file($path)->parse());
     }
@@ -55,8 +57,8 @@ class ConfigController extends Controller
         return $values;
     }
 
-    protected function preProcess(): array
+    protected function preProcess(string $handle): array
     {
-        return config(Forma::handle());
+        return config($handle);
     }
 }
