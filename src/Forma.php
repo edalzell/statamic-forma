@@ -24,7 +24,7 @@ class Forma
 
     public static function addons(): Collection
     {
-        return static::$addons;
+        return static::$addons ?? collect();
     }
 
     public static function getAddon($handle): Addon
