@@ -3,8 +3,6 @@
 namespace Edalzell\Forma;
 
 use Illuminate\Http\Request;
-use Statamic\Facades\Addon as AddonAPI;
-use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
 use Statamic\Facades\YAML;
@@ -47,7 +45,7 @@ class ConfigController extends Controller
 
     private function getBlueprint(string $handle): Blueprint
     {
-        $addon = AddonAPI::get(Blink::store('forma')->get($handle));
+        $addon = Forma::findByHandle($handle);
 
         $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
 
