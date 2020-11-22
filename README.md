@@ -22,9 +22,17 @@ The package will automatically register itself.
 
 First, create a `config.yaml` file in `resources\config` that contains the blueprint for your configuration. As an example, see Mailchimp's, [here](https://github.com/silentzco/statamic-mailchimp/blob/main/resources/blueprints/config.yaml).
 
-Then, in your addon's Service Provider add `\Edalzell\Forma\Forma::registerAddon($yourComposerPackage);` to the `boot` method. For example, the Mailchimp addon does it like so: `Forma::registerAddon('silentz/mailchimp');`
+Then, in your addon's Service Provider:
+* add `use HasConfig`
+* in your `boot` method "register" the config:
 
-Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_key.php` in the `config` folder.
+```
+$this->app->booted(function () {
+    $this->addConfig('your/package');
+});
+```
+
+Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` in the `config` folder.
 
 ![menu item](https://raw.githubusercontent.com/edalzell/statamic-forma/main/images/mailchimp-menu.png)
 
