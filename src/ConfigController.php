@@ -3,6 +3,8 @@
 namespace Edalzell\Forma;
 
 use Illuminate\Http\Request;
+use Statamic\Facades\Addon as AddonAPI;
+use Statamic\Facades\Blink;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
 use Statamic\Facades\YAML;
@@ -40,12 +42,12 @@ class ConfigController extends Controller
         // a 422 response will be sent back with all the validation errors.
         $fields->validate();
 
-        ConfigWriter::writeMany('mailchimp', $this->postProcess($fields->process()->values()->toArray()));
+        ConfigWriter::writeMany($handle, $this->postProcess($fields->process()->values()->toArray()));
     }
 
     private function getBlueprint(string $handle): Blueprint
     {
-        $addon = Forma::getAddon($handle);
+        $addon = AddonAPI::get(Blink::store('forma')->get($handle));
 
         $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
 
