@@ -5,16 +5,19 @@ namespace Edalzell\Forma;
 use Illuminate\Support\Facades\Route;
 use Statamic\CP\Navigation\Nav;
 use Statamic\Extend\Addon;
+use Statamic\Facades\Addon as AddonAPI;
 use Statamic\Facades\CP\Nav as NavAPI;
 use Statamic\Statamic;
 
 class FormaAddon
 {
     private Addon $addon;
+    private string $controller;
 
-    public function __construct(Addon $addon)
+    public function __construct(string $package, ?string $controller)
     {
-        $this->addon = $addon;
+        $this->addon = AddonAPI::get($package);
+        $this->controller = $controller ?: ConfigController::class;
     }
 
     public function boot()
@@ -38,8 +41,8 @@ class FormaAddon
         Statamic::pushCpRoutes(function () {
             Route::name($this->addon->handle())->prefix('{handle}')->group(function () {
                 Route::name('.config.')->prefix('config')->group(function () {
-                    Route::get('edit', [ConfigController::class, 'edit'])->name('edit');
-                    Route::post('update', [ConfigController::class, 'update'])->name('update');
+                    Route::get('edit', [$this->controller, 'edit'])->name('edit');
+                    Route::post('update', [$this->controller, 'update'])->name('update');
                 });
             });
         });

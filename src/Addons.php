@@ -8,27 +8,25 @@ use Statamic\Facades\Addon as AddonAPI;
 
 class Addons
 {
-    private Collection $packages;
+    private Collection $addons;
 
     public function __construct()
     {
-        $this->packages = collect();
+        $this->addons = collect();
     }
 
-    public function add(string $package)
+    public function add(string $package, string $controller = null)
     {
-        $this->packages->add($package);
+        $this->addons->add(new FormaAddon($package, $controller));
     }
 
     public function findByHandle(string $handle): Addon
     {
-        return AddonAPI::all()->first(function ($addon) use ($handle) {
-            return $addon->handle() === $handle;
-        });
+        return AddonAPI::all()->first(fn ($addon) => $addon->handle() === $handle);
     }
 
     public function all(): Collection
     {
-        return $this->packages->map(fn ($package) => new FormaAddon(AddonAPI::get($package)));
+        return $this->addons;
     }
 }

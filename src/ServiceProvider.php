@@ -16,8 +16,6 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        if (! app()->runningInConsole()) {
-            Statamic::booted(fn () => Forma::all()->each->boot());
-        }
+        Statamic::booted(fn () => Forma::all()->each->boot());
     }
 }
