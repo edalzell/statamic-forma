@@ -37,7 +37,23 @@ If your addon needs to wangjangle the config before loading and after saving, cr
 
 For example, the Mailchimp addon stores a config like this:
 ```php
-    'user' => [
+'user' => [
+    'check_consent' => true,
+    'consent_field' => 'permission',
+    'merge_fields' => [
+        [
+            'field_name' => 'first_name',
+        ],
+    ],
+    'disable_opt_in' => true,
+    'interests_field' => 'interests',
+],
+```
+
+But there is no Blueprint that supports that, so it uses a grid, which expects the data to look like:
+```php
+'user' => [
+    [
         'check_consent' => true,
         'consent_field' => 'permission',
         'merge_fields' => [
@@ -47,47 +63,31 @@ For example, the Mailchimp addon stores a config like this:
         ],
         'disable_opt_in' => true,
         'interests_field' => 'interests',
-    ],
-```
-
-But there is no Blueprint that supports that, so it uses a grid, which expects the data to look like:
-```php
-    'user' => [
-        [
-            'check_consent' => true,
-            'consent_field' => 'permission',
-            'merge_fields' => [
-                [
-                    'field_name' => 'first_name',
-                ],
-            ],
-            'disable_opt_in' => true,
-            'interests_field' => 'interests',
-        ]
-    ],
+    ]
+],
 ```
 
 Therefore in its `ConfigController`:
 ```php
-    protected function postProcess(array $values): array
-    {
-        $userConfig = Arr::get($values, 'user');
+protected function postProcess(array $values): array
+{
+    $userConfig = Arr::get($values, 'user');
 
-        return array_merge(
-            $values,
-            ['user' => $userConfig[0]]
-        );
-    }
+    return array_merge(
+        $values,
+        ['user' => $userConfig[0]]
+    );
+}
 
-    protected function preProcess(string $handle): array
-    {
-        $config = config($handle);
+protected function preProcess(string $handle): array
+{
+    $config = config($handle);
 
-        return array_merge(
-            $config,
-            ['user' => [Arr::get($config, 'user', [])]]
-        );
-    }
+    return array_merge(
+        $config,
+        ['user' => [Arr::get($config, 'user', [])]]
+    );
+}
 ```
 
 
