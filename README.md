@@ -23,7 +23,7 @@ The package will automatically register itself.
 First, create a `config.yaml` file in `resources\config` that contains the blueprint for your configuration. As an example, see Mailchimp's, [here](https://github.com/silentzco/statamic-mailchimp/blob/main/resources/blueprints/config.yaml).
 
 Then, in the `boot` method of your addon's Service Provider add:
-```
+```php
 \Edalzell\Forma\Forma::add('package/name');
 ```
 
@@ -31,7 +31,67 @@ Once you do that, you get a menu item in the cp that your users can access and u
 
 ![menu item](https://raw.githubusercontent.com/edalzell/statamic-forma/main/images/mailchimp-menu.png)
 
-### Changelog
+### Extending
+
+If your addon needs to wangjangle the config before loading and after saving, create your own controller that `extends \Edalzell\Forma\ConfigController` and use the `preProcess` and `postProcess` methods.
+
+For example, the Mailchimp addon stores a config like this:
+```php
+    'user' => [
+        'check_consent' => true,
+        'consent_field' => 'permission',
+        'merge_fields' => [
+            [
+                'field_name' => 'first_name',
+            ],
+        ],
+        'disable_opt_in' => true,
+        'interests_field' => 'interests',
+    ],
+```
+
+But there is no Blueprint that supports that, so it uses a grid, which expects the data to look like:
+```php
+    'user' => [
+        [
+            'check_consent' => true,
+            'consent_field' => 'permission',
+            'merge_fields' => [
+                [
+                    'field_name' => 'first_name',
+                ],
+            ],
+            'disable_opt_in' => true,
+            'interests_field' => 'interests',
+        ]
+    ],
+```
+
+Therefore in its `ConfigController`:
+```php
+    protected function postProcess(array $values): array
+    {
+        $userConfig = Arr::get($values, 'user');
+
+        return array_merge(
+            $values,
+            ['user' => $userConfig[0]]
+        );
+    }
+
+    protected function preProcess(string $handle): array
+    {
+        $config = config($handle);
+
+        return array_merge(
+            $config,
+            ['user' => [Arr::get($config, 'user', [])]]
+        );
+    }
+```
+
+
+## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
 
