@@ -11,7 +11,7 @@ use Statamic\Statamic;
 
 class FormaAddon
 {
-    private Addon $addon;
+    private ?Addon $addon;
     private string $controller;
 
     public function __construct(string $package, ?string $controller)
@@ -38,6 +38,10 @@ class FormaAddon
 
     private function registerRoutes()
     {
+        if (! $this->addon) {
+            return;
+        }
+
         Statamic::pushCpRoutes(function () {
             Route::name($this->addon->handle())->prefix('{handle}')->group(function () {
                 Route::name('.config.')->prefix('config')->group(function () {
