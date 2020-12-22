@@ -24,8 +24,12 @@ First, create a `config.yaml` file in `resources\config` that contains the bluep
 
 Then, in the `boot` method of your addon's Service Provider add:
 ```php
-\Edalzell\Forma\Forma::add('package/name');
+$this->app->booted(function () {
+    \Edalzell\Forma\Forma::add('silentz/mailchimp', ConfigController::class);
+});
 ```
+
+The second parameter is optional and only needed if you need custom config handling (see Exending below)
 
 Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` in the `config` folder.
 
