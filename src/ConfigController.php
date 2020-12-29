@@ -12,8 +12,10 @@ use Stillat\Proteus\Support\Facades\ConfigWriter;
 
 class ConfigController extends Controller
 {
-    public function edit(string $handle)
+    public function edit(Request $request)
     {
+        $handle = $request->segment(2);
+
         $blueprint = $this->getBlueprint($handle);
 
         $fields = $blueprint
@@ -29,8 +31,10 @@ class ConfigController extends Controller
         ]);
     }
 
-    public function update(string $handle, Request $request)
+    public function update(Request $request)
     {
+        $handle = $request->segment(2);
+
         $blueprint = $this->getBlueprint($handle);
 
         // Get a Fields object, and populate it with the submitted values.

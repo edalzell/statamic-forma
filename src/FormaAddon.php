@@ -43,7 +43,7 @@ class FormaAddon
         }
 
         Statamic::pushCpRoutes(function () {
-            Route::name($this->addon->handle())->prefix('{handle}')->group(function () {
+            Route::name($this->addon->handle())->prefix($this->addon->handle())->group(function () {
                 Route::name('.config.')->prefix('config')->group(function () {
                     Route::get('edit', [$this->controller, 'edit'])->name('edit');
                     Route::post('update', [$this->controller, 'update'])->name('update');
