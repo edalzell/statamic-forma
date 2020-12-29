@@ -31,7 +31,7 @@ class FormaAddon
         NavAPI::extend(function (Nav $nav) {
             $nav->content('Config')
                 ->section($this->addon->name())
-                ->route($this->addon->handle().'.config.edit', ['handle' => $this->addon->handle()])
+                ->route($this->addon->handle().'.config.edit')
                 ->icon('settings-horizontal');
         });
     }
