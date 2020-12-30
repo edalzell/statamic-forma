@@ -29,8 +29,8 @@ class FormaAddon
     private function bootNav()
     {
         NavAPI::extend(function (Nav $nav) {
-            $nav->content('Config')
-                ->section($this->addon->name())
+            $nav->content($this->addon->name())
+                ->section('Addon Settings')
                 ->route($this->addon->handle().'.config.edit')
                 ->icon('settings-horizontal');
         });
