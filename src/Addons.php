@@ -8,16 +8,11 @@ use Statamic\Facades\Addon as AddonAPI;
 
 class Addons
 {
-    private Collection $addons;
-
-    public function __construct()
-    {
-        $this->addons = collect();
-    }
+    private array $addons = [];
 
     public function add(string $package, string $controller = null)
     {
-        $this->addons->add(new FormaAddon($package, $controller));
+        $this->addons[$package] = $controller;
     }
 
     public function findByHandle(string $handle): Addon
@@ -27,6 +22,6 @@ class Addons
 
     public function all(): Collection
     {
-        return $this->addons;
+        return collect($this->addons)->map(fn ($controller, $package) => new FormaAddon($package, $controller));
     }
 }

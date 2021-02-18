@@ -6,17 +6,18 @@ use Illuminate\Support\Facades\Route;
 use Statamic\CP\Navigation\Nav;
 use Statamic\Extend\Addon;
 use Statamic\Facades\Addon as AddonAPI;
+use Statamic\Facades\Blink;
 use Statamic\Facades\CP\Nav as NavAPI;
 use Statamic\Statamic;
 
 class FormaAddon
 {
-    private ?Addon $addon;
+    private string $addon;
     private string $controller;
 
     public function __construct(string $package, ?string $controller)
     {
-        $this->addon = AddonAPI::get($package);
+        $this->addon = $package;
         $this->controller = $controller ?: ConfigController::class;
     }
 
@@ -29,11 +30,16 @@ class FormaAddon
     private function bootNav()
     {
         NavAPI::extend(function (Nav $nav) {
-            $nav->content($this->addon->name())
+            $nav->content($this->getAddon()->name())
                 ->section('Addon Settings')
-                ->route($this->addon->handle().'.config.edit')
+                ->route($this->getAddon()->handle().'.config.edit')
                 ->icon('settings-horizontal');
         });
+    }
+
+    private function getAddon(): Addon
+    {
+        return Blink::once($this->addon, fn () => AddonAPI::get($this->addon));
     }
 
     private function registerRoutes()
@@ -43,7 +49,7 @@ class FormaAddon
         }
 
         Statamic::pushCpRoutes(function () {
-            Route::name($this->addon->handle())->prefix($this->addon->handle())->group(function () {
+            Route::name($this->getAddon()->handle())->prefix($this->getAddon()->handle())->group(function () {
                 Route::name('.config.')->prefix('config')->group(function () {
                     Route::get('edit', [$this->controller, 'edit'])->name('edit');
                     Route::post('update', [$this->controller, 'update'])->name('update');
