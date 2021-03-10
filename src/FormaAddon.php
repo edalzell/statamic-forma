@@ -29,12 +29,15 @@ class FormaAddon
 
     private function bootNav()
     {
-        NavAPI::extend(function (Nav $nav) {
-            $nav->content($this->getAddon()->name())
-                ->section('Addon Settings')
-                ->route($this->getAddon()->handle().'.config.edit')
-                ->icon('settings-horizontal');
-        });
+        if (! $addon = $this->getAddon()) {
+            return;
+        }
+
+        NavAPI::extend(fn (Nav $nav) => $nav
+            ->content($addon->name())
+            ->section('Addon Settings')
+            ->route($addon->handle().'.config.edit')
+            ->icon('settings-horizontal'));
     }
 
     private function getAddon(): Addon
