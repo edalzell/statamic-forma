@@ -40,24 +40,22 @@ class FormaAddon
             ->icon('settings-horizontal'));
     }
 
-    private function getAddon(): Addon
+    private function getAddon(): ?Addon
     {
         return Blink::once($this->addon, fn () => AddonAPI::get($this->addon));
     }
 
     private function registerRoutes()
     {
-        if (! $this->addon) {
+        if (! $addon = $this->getAddon()) {
             return;
         }
 
-        Statamic::pushCpRoutes(function () {
-            Route::name($this->getAddon()->handle())->prefix($this->getAddon()->handle())->group(function () {
-                Route::name('.config.')->prefix('config')->group(function () {
-                    Route::get('edit', [$this->controller, 'edit'])->name('edit');
-                    Route::post('update', [$this->controller, 'update'])->name('update');
-                });
+        Statamic::pushCpRoutes(fn () => Route::name($addon->handle())->prefix($addon->handle())->group(function () {
+            Route::name('.config.')->prefix('config')->group(function () {
+                Route::get('edit', [$this->controller, 'edit'])->name('edit');
+                Route::post('update', [$this->controller, 'update'])->name('update');
             });
-        });
+        }));
     }
 }
