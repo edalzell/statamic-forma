@@ -36,7 +36,7 @@ class FormaAddon
         NavAPI::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
             ->section('Addon Settings')
-            ->route($addon->handle().'.config.edit')
+            ->route($addon->slug().'.config.edit')
             ->icon('settings-horizontal'));
     }
 
@@ -51,7 +51,7 @@ class FormaAddon
             return;
         }
 
-        Statamic::pushCpRoutes(fn () => Route::name($addon->handle())->prefix($addon->handle())->group(function () {
+        Statamic::pushCpRoutes(fn () => Route::name($addon->slug())->prefix($addon->slug())->group(function () {
             Route::name('.config.')->prefix('config')->group(function () {
                 Route::get('edit', [$this->controller, 'edit'])->name('edit');
                 Route::post('update', [$this->controller, 'update'])->name('update');

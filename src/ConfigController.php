@@ -33,9 +33,9 @@ class ConfigController extends Controller
 
     public function update(Request $request)
     {
-        $handle = $request->segment(2);
+        $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($handle);
+        $blueprint = $this->getBlueprint($slug);
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -47,9 +47,9 @@ class ConfigController extends Controller
         ConfigWriter::writeMany($handle, $this->postProcess($fields->process()->values()->toArray()));
     }
 
-    private function getBlueprint(string $handle): Blueprint
+    private function getBlueprint(string $slug): Blueprint
     {
-        $addon = Forma::findByHandle($handle);
+        $addon = Forma::findBySlug($slug);
 
         $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
 

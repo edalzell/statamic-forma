@@ -15,9 +15,9 @@ class Addons
         $this->addons[$package] = $controller;
     }
 
-    public function findByHandle(string $handle): Addon
+    public function findBySlug(string $slug): Addon
     {
-        return AddonAPI::all()->first(fn ($addon) => $addon->handle() === $handle);
+        return AddonAPI::all()->first(fn ($addon) => $addon->slug() === $slug);
     }
 
     public function all(): Collection
