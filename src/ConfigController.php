@@ -14,19 +14,19 @@ class ConfigController extends Controller
 {
     public function edit(Request $request)
     {
-        $handle = $request->segment(2);
+        $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($handle);
+        $blueprint = $this->getBlueprint($slug);
 
         $fields = $blueprint
             ->fields()
-            ->addValues($this->preProcess($handle))
+            ->addValues($this->preProcess($slug))
             ->preProcess();
 
         return view('forma::edit', [
             'blueprint' => $blueprint->toPublishArray(),
             'meta' => $fields->meta(),
-            'route' => cp_route("{$handle}.config.update", ['handle' => $handle]),
+            'route' => cp_route("{$slug}.config.update", ['handle' => $slug]),
             'values' => $fields->values(),
         ]);
     }
@@ -44,7 +44,7 @@ class ConfigController extends Controller
         // a 422 response will be sent back with all the validation errors.
         $fields->validate();
 
-        ConfigWriter::writeMany($handle, $this->postProcess($fields->process()->values()->toArray()));
+        ConfigWriter::writeMany($slug, $this->postProcess($fields->process()->values()->toArray()));
     }
 
     private function getBlueprint(string $slug): Blueprint
