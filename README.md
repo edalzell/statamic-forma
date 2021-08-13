@@ -33,6 +33,10 @@ Once you do that, you get a menu item in the cp that your users can access and u
 
 ![menu item](https://raw.githubusercontent.com/edalzell/statamic-forma/main/images/mailchimp-menu.png)
 
+### Permissions
+
+There is a `Manage Addon Settings` permission that must be enabled to allow a user to update the settings of any Forma-enabled addons.
+
 ### Extending
 
 If your addon needs to wangjangle the config before loading and after saving, create your own controller that `extends \Edalzell\Forma\ConfigController` and use the `preProcess` and `postProcess` methods.

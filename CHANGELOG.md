@@ -2,6 +2,11 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## 1.0 - 2021-08-12
+
+* official release
+* add permission
+
 ## 0.8 - 2020-12-19
 
 * Allow addons to pre/post process the config

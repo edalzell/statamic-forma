@@ -2,6 +2,7 @@
 
 namespace Edalzell\Forma;
 
+use Statamic\Facades\Permission;
 use Statamic\Providers\AddonServiceProvider;
 use Statamic\Statamic;
 
@@ -16,6 +17,15 @@ class ServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        Statamic::booted(fn () => Forma::all()->each->boot());
+        Statamic::booted(function () {
+            $this->bootPermissions();
+            Forma::all()->each->boot();
+        });
+    }
+
+    private function bootPermissions()
+    {
+        Permission::register('manage addon settings')
+            ->label('Manage Addon Settings');
     }
 }
