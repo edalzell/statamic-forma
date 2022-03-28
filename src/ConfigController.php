@@ -44,7 +44,8 @@ class ConfigController extends Controller
         // a 422 response will be sent back with all the validation errors.
         $fields->validate();
 
-        ConfigWriter::writeMany($slug, $this->postProcess($fields->process()->values()->toArray()));
+        ConfigWriter::ignoreFunctionCalls()
+            ->writeMany($slug, $this->postProcess($fields->process()->values()->toArray()));
     }
 
     private function getBlueprint(string $slug): Blueprint
