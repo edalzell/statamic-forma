@@ -2,7 +2,7 @@
 
 namespace Edalzell\Forma;
 
-use Forma\Events\ConfigSaved;
+use Edalzell\Forma\Events\ConfigSaved;
 use Illuminate\Http\Request;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;

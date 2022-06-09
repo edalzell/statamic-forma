@@ -1,6 +1,6 @@
 <?php
 
-namespace Forma\Events;
+namespace Edalzell\Forma\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
