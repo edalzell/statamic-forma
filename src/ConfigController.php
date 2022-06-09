@@ -2,6 +2,7 @@
 
 namespace Edalzell\Forma;
 
+use Forma\Events\ConfigSaved;
 use Illuminate\Http\Request;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
@@ -44,8 +45,11 @@ class ConfigController extends Controller
         // a 422 response will be sent back with all the validation errors.
         $fields->validate();
 
-        ConfigWriter::ignoreFunctionCalls()
-            ->writeMany($slug, $this->postProcess($fields->process()->values()->toArray()));
+        $data = $this->postProcess($fields->process()->values()->toArray());
+
+        ConfigWriter::ignoreFunctionCalls()->writeMany($slug, $data);
+
+        ConfigSaved::dispatch($data);
     }
 
     private function getBlueprint(string $slug): Blueprint
