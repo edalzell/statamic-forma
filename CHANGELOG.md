@@ -2,6 +2,15 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## 1.2 - 2022-06-09
+
+* add `ConfigSaved` event
+
+## 1.1 - 2022-03-27
+
+* don’t overwrite .env vars
+* support Laravel 9
+
 ## 1.0 - 2021-08-12
 
 * official release
