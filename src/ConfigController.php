@@ -47,9 +47,7 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        ConfigWriter::ignoreFunctionCalls()
-            ->preserve(config("forma.preserve_keys.{$slug}", []))
-            ->writeMany($slug, $data);
+        ConfigWriter::ignoreFunctionCalls()->mergeMany($slug, $data);
 
         ConfigSaved::dispatch($data);
     }
