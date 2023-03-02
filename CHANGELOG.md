@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v1.3.0 - 2023-03-02
+
+### 🚀 New
+
+- Proteus 2.0 [@edalzell](https://github.com/edalzell) (#11)
+
 ## v1.2.1 - 2023-01-31
 
 - Preserve config keys [@edalzell](https://github.com/edalzell) (#9)
