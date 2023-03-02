@@ -47,7 +47,7 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        ConfigWriter::ignoreFunctionCalls()->mergeMany($slug, $data);
+        ConfigWriter::writeMany($slug, $data);
 
         ConfigSaved::dispatch($data);
     }
