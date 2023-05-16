@@ -4,7 +4,7 @@
     "type": "statamic-addon",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^10.0",
+        "laravel/framework": "^9.6 || ^10.0",
         "statamic/cms": "^4.0",
         "stillat/proteus": "^2.0"
     },
