@@ -2,6 +2,13 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v2.0 - 2023-05-16
+
+### 🚀 New
+
+- Support Statamic v4 [@edalzell](https://github.com/edalzell) (#12)
+- Remove support for Statamic v3, Laravel v7, 8, 9, and PHP < 8.2
+
 ## v1.3.0 - 2023-03-02
 
 ### 🚀 New
