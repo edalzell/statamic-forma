@@ -5,8 +5,9 @@ This package provides an easy way to let users configure your addon.
 
 ## Requirements
 
-* PHP 7.4+
-* Statamic v3
+* PHP 8.2+
+* Laravel 10.0+
+* Statamic 4.0+
 
 ## Installation
 
