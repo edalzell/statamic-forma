@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v2.0.1 - 2023-05-16
+
+### 🐛 Fixed
+
+- Add back Laravel 9 support [@edalzell](https://github.com/edalzell) (#13)
+
 ## v2.0 - 2023-05-16
 
 ### 🚀 New
