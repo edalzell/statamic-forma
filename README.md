@@ -21,7 +21,7 @@ The package will automatically register itself.
 
 ## Usage
 
-First, create a `config.yaml` file in `resources\config` that contains the blueprint for your configuration. As an example, see Mailchimp's, [here](https://github.com/silentzco/statamic-mailchimp/blob/main/resources/blueprints/config.yaml).
+First, create a `config.yaml` file in `resources\blueprints` that contains the blueprint for your configuration. As an example, see Mailchimp's, [here](https://github.com/silentzco/statamic-mailchimp/blob/main/resources/blueprints/config.yaml).
 
 Then, in the `boot` method of your addon's Service Provider add:
 ```php
