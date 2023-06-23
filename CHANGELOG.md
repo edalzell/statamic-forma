@@ -2,6 +2,14 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v2.0.2 - 2023-06-23
+
+- Update README.md [@vmitchell85](https://github.com/vmitchell85) (#15)
+
+### 🐛 Fixed
+
+- Support older versions of PHP [@edalzell](https://github.com/edalzell) (#17)
+
 ## v2.0.1 - 2023-05-16
 
 ### 🐛 Fixed
