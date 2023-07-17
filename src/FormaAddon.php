@@ -8,6 +8,7 @@ use Statamic\Extend\Addon;
 use Statamic\Facades\Addon as AddonAPI;
 use Statamic\Facades\Blink;
 use Statamic\Facades\CP\Nav as NavAPI;
+use Statamic\Facades\Permission;
 use Statamic\Statamic;
 
 class FormaAddon
@@ -24,6 +25,7 @@ class FormaAddon
     public function boot()
     {
         $this->bootNav();
+        $this->bootPermissions();
         $this->registerRoutes();
     }
 
@@ -33,12 +35,25 @@ class FormaAddon
             return;
         }
 
+        $controllerInstance = app($this->controller);
+
         NavAPI::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
-            ->section('Settings')
-            ->can('manage addon settings')
+            ->section($controllerInstance::cpSection())
+            ->can('manage '.$addon->slug().' settings')
             ->route($addon->slug() . '.config.edit')
-            ->icon('settings-horizontal'));
+            ->icon($controllerInstance::cpIcon())
+        );
+    }
+
+    private function bootPermissions()
+    {
+        if (! $addon = $this->getAddon()) {
+            return;
+        }
+
+        Permission::register('manage '.$addon->slug().' settings')
+            ->label('Manage '.$addon->name().' Settings');
     }
 
     private function getAddon(): ?Addon

@@ -4,6 +4,7 @@ namespace Edalzell\Forma;
 
 use Edalzell\Forma\Events\ConfigSaved;
 use Illuminate\Http\Request;
+use Statamic\Extend\Addon;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
 use Statamic\Facades\YAML;
@@ -17,7 +18,9 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($slug);
+        $addon = Forma::findBySlug($slug);
+
+        $blueprint = $this->getBlueprint($addon);
 
         $fields = $blueprint
             ->fields()
@@ -28,6 +31,7 @@ class ConfigController extends Controller
             'blueprint' => $blueprint->toPublishArray(),
             'meta' => $fields->meta(),
             'route' => cp_route("{$slug}.config.update", ['handle' => $slug]),
+            'title' => $this->cpTitle($addon),
             'values' => $fields->values(),
         ]);
     }
@@ -36,7 +40,9 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($slug);
+        $addon = Forma::findBySlug($slug);
+
+        $blueprint = $this->getBlueprint($addon);
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -47,18 +53,36 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        ConfigWriter::writeMany($slug, $data);
+        $keys = $this->getKeysFromData($data);
 
-        ConfigSaved::dispatch($data);
+        $write = ConfigWriter::replace($keys)
+            ->writeMany($slug, $data);
+
+        ConfigSaved::dispatch($data, $addon);
     }
 
-    private function getBlueprint(string $slug): Blueprint
+    private function getBlueprint(Addon $addon): Blueprint
     {
-        $addon = Forma::findBySlug($slug);
-
         $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
 
-        return BlueprintAPI::makeFromFields(YAML::file($path)->parse());
+        $yaml = YAML::file($path)->parse();
+
+        if ($yaml['tabs'] ?? false) {
+            return BlueprintAPI::make()->setContents($yaml);
+        }
+
+        return BlueprintAPI::makeFromFields($yaml);
+    }
+
+    private function getKeysFromData($data)
+    {
+        return collect($data)->map(function ($value, $key) {
+            if (is_array($value) && (int)$key != $key) {
+                return $this->getKeysFromData($value);
+            }
+
+            return $key;
+        })->all();
     }
 
     protected function postProcess(array $values): array
@@ -69,5 +93,20 @@ class ConfigController extends Controller
     protected function preProcess(string $handle): array
     {
         return config($handle);
+    }
+
+    public static function cpIcon()
+    {
+        return 'settings-horizontal';
+    }
+
+    public static function cpSection()
+    {
+        return __('Settings');
+    }
+
+    private function cpTitle(Addon $addon)
+    {
+        return __(':name Settings', ['name' => $addon->name()]);
     }
 }
