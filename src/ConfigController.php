@@ -53,10 +53,7 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        $keys = $this->getKeysFromData($data);
-
-        $write = ConfigWriter::replace($keys)
-            ->writeMany($slug, $data);
+        $write = ConfigWriter::writeMany($slug, $data);
 
         ConfigSaved::dispatch($data, $addon);
     }
@@ -72,17 +69,6 @@ class ConfigController extends Controller
         }
 
         return BlueprintAPI::makeFromFields($yaml);
-    }
-
-    private function getKeysFromData($data)
-    {
-        return collect($data)->map(function ($value, $key) {
-            if (is_array($value) && (int)$key != $key) {
-                return $this->getKeysFromData($value);
-            }
-
-            return $key;
-        })->all();
     }
 
     protected function postProcess(array $values): array
