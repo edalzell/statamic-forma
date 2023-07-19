@@ -2,6 +2,16 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v2.1 - 2023-07-18
+
+### 🚀 New
+
+- Specify tabs & sections instead of just fields
+- Title of config page is now translatable
+- Passes the add-on to the ConfigSaved event so you know what add-on was saved
+- Allows the nav icon & section to be specified
+- Makes permissions specific to the add-on not forma generally
+
 ## v2.0.2 - 2023-06-23
 
 - Update README.md [@vmitchell85](https://github.com/vmitchell85) (#15)
