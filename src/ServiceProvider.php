@@ -3,7 +3,6 @@
 namespace Edalzell\Forma;
 
 use Statamic\Providers\AddonServiceProvider;
-use Statamic\Statamic;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -12,12 +11,8 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(Forma::class, fn () => new Forma);
     }
 
-    public function boot()
+    public function bootAddon()
     {
-        parent::boot();
-
-        Statamic::booted(function () {
-            Forma::all()->each->boot();
-        });
+        Forma::all()->each->boot();
     }
 }
