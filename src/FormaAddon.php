@@ -17,12 +17,21 @@ class FormaAddon
         private ?string $controller = ConfigController::class,
         private ?string $config = null
     ) {
-        $this->config = $config ?? $this->statamicAddon()->slug();
     }
 
     public function boot()
     {
         $this->bootNav()->registerRoutes();
+    }
+
+    public function configHandle(): string
+    {
+        return $this->config ?? $this->statamicAddon()->slug();
+    }
+
+    public function statamicAddon(): ?Addon
+    {
+        return Blink::once($this->package, fn () => AddonFacade::get($this->package));
     }
 
     private function bootNav(): self
@@ -39,11 +48,6 @@ class FormaAddon
             ->icon('settings-horizontal'));
 
         return $this;
-    }
-
-    public function statamicAddon(): ?Addon
-    {
-        return Blink::once($this->package, fn () => AddonFacade::get($this->package));
     }
 
     private function registerRoutes()

@@ -38,7 +38,7 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint(Forma::findBySlug($slug));
+        $blueprint = $this->getBlueprint($addon = Forma::findBySlug($slug));
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -49,7 +49,7 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        ConfigWriter::writeMany($slug, $data);
+        ConfigWriter::writeMany($addon->configHandle(), $data);
 
         ConfigSaved::dispatch($data);
     }
@@ -68,6 +68,6 @@ class ConfigController extends Controller
 
     protected function preProcess(string $handle): array
     {
-        return config($handle);
+        return config(Forma::findBySlug($handle)->configHandle());
     }
 }
