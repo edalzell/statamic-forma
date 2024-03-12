@@ -12,57 +12,48 @@ use Statamic\Statamic;
 
 class FormaAddon
 {
-    private string $addon;
-
-    private string $controller;
-
-    private ?string $handle;
-
-    public function __construct(string $package, ?string $controller = null, ?string $handle = null)
-    {
-        $this->addon = $package;
-        $this->controller = $controller ?: ConfigController::class;
-        $this->handle = $handle;
+    public function __construct(
+        private string $package,
+        private ?string $controller = ConfigController::class,
+        private ?string $config = null
+    ) {
+        $this->config = $config ?? $this->statamicAddon()->slug();
     }
 
     public function boot()
     {
-        $this->bootNav();
-        $this->registerRoutes();
+        $this->bootNav()->registerRoutes();
     }
 
-    private function bootNav()
+    private function bootNav(): self
     {
-        if (! $addon = $this->getAddon()) {
-            return;
+        if (! $addon = $this->statamicAddon()) {
+            return $this;
         }
 
         NavFacade::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
             ->section('Settings')
             ->can('manage addon settings')
-            ->route($this->handle().'.config.edit')
+            ->route($addon->slug().'.config.edit')
             ->icon('settings-horizontal'));
+
+        return $this;
     }
 
-    private function getAddon(): ?Addon
+    public function statamicAddon(): ?Addon
     {
-        return Blink::once($this->addon, fn () => AddonFacade::get($this->addon));
-    }
-
-    private function handle(): ?string
-    {
-        return $this->handle ?? $this->getAddon()->slug();
+        return Blink::once($this->package, fn () => AddonFacade::get($this->package));
     }
 
     private function registerRoutes()
     {
-        if (! $handle = $this->handle()) {
-            return;
+        if (is_null($addon = $this->statamicAddon())) {
+            return $this;
         }
 
-        Statamic::pushCpRoutes(fn () => Route::name($handle)->prefix($handle)->group(function () {
-            Route::name('.config.')->prefix('config')->group(function () {
+        Statamic::pushCpRoutes(fn () => Route::name($addon->slug().'.')->prefix($addon->slug())->group(function () {
+            Route::name('config.')->prefix('config')->group(function () {
                 Route::get('edit', [$this->controller, 'edit'])->name('edit');
                 Route::post('update', [$this->controller, 'update'])->name('update');
             });

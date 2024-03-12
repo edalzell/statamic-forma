@@ -17,11 +17,13 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($slug);
+        $addon = Forma::findBySlug($slug);
+
+        $blueprint = $this->getBlueprint($addon);
 
         $fields = $blueprint
             ->fields()
-            ->addValues($this->preProcess($slug))
+            ->addValues($this->preProcess($addon->statamicAddon()->slug()))
             ->preProcess();
 
         return view('forma::edit', [
@@ -36,7 +38,7 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $blueprint = $this->getBlueprint($slug);
+        $blueprint = $this->getBlueprint(Forma::findBySlug($slug));
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -52,11 +54,9 @@ class ConfigController extends Controller
         ConfigSaved::dispatch($data);
     }
 
-    private function getBlueprint(string $slug): Blueprint
+    private function getBlueprint(FormaAddon $addon): Blueprint
     {
-        $addon = Forma::findBySlug($slug);
-
-        $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
+        $path = Path::assemble($addon->statamicAddon()->directory(), 'resources', 'blueprints', 'config.yaml');
 
         return BlueprintAPI::makeFromFields(YAML::file($path)->parse());
     }
