@@ -3,7 +3,6 @@
 namespace Edalzell\Forma;
 
 use Illuminate\Support\Collection;
-use Statamic\Facades\Addon as AddonFacade;
 
 class Addons
 {
@@ -14,7 +13,7 @@ class Addons
         $this->addons = collect();
     }
 
-    public function add(string $package, ?string $controller = null, ?string $config = null)
+    public function add(string $package, ?string $controller = null, ?string $config = null): void
     {
         $this->addons->push(new FormaAddon($package, $controller, $config));
     }

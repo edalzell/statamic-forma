@@ -3,6 +3,8 @@
 namespace Edalzell\Forma;
 
 use Edalzell\Forma\Events\ConfigSaved;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
@@ -13,7 +15,7 @@ use Stillat\Proteus\Support\Facades\ConfigWriter;
 
 class ConfigController extends Controller
 {
-    public function edit(Request $request)
+    public function edit(Request $request): View|Factory
     {
         $slug = $request->segment(2);
 
@@ -33,7 +35,7 @@ class ConfigController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request): void
     {
         $slug = $request->segment(2);
 
@@ -76,17 +78,17 @@ class ConfigController extends Controller
         return config(Forma::findBySlug($handle)->configHandle());
     }
 
-    public static function cpIcon()
+    public static function cpIcon(): string
     {
         return 'settings-horizontal';
     }
 
-    public static function cpSection()
+    public static function cpSection(): string
     {
         return __('Settings');
     }
 
-    private function cpTitle(FormaAddon $addon)
+    private function cpTitle(FormaAddon $addon): string
     {
         return __(':name Settings', ['name' => $addon->statamicAddon()->name()]);
     }
