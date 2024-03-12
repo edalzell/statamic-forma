@@ -25,7 +25,7 @@ First, create a `config.yaml` file in `resources\blueprints` that contains the b
 
 Then, in the `boot` method of your addon's Service Provider add:
 ```php
-\Edalzell\Forma\Forma::add('silentz/mailchimp', ConfigController::class);
+\Edalzell\Forma\Forma::add('statamic-rad-pack/mailchimp', ConfigController::class);
 ```
 
 The second parameter is optional and only needed if you need custom config handling (see Extending below)
