@@ -17,9 +17,7 @@ class ConfigController extends Controller
     {
         $slug = $request->segment(2);
 
-        $addon = Forma::findBySlug($slug);
-
-        $blueprint = $this->getBlueprint($addon);
+        $blueprint = $this->getBlueprint($addon = Forma::findBySlug($slug));
 
         $fields = $blueprint
             ->fields()
@@ -30,6 +28,7 @@ class ConfigController extends Controller
             'blueprint' => $blueprint->toPublishArray(),
             'meta' => $fields->meta(),
             'route' => cp_route("{$slug}.config.update", ['handle' => $slug]),
+            'title' => $this->cpTitle($addon),
             'values' => $fields->values(),
         ]);
     }
@@ -51,14 +50,20 @@ class ConfigController extends Controller
 
         ConfigWriter::writeMany($addon->configHandle(), $data);
 
-        ConfigSaved::dispatch($data);
+        ConfigSaved::dispatch($data, $addon);
     }
 
     private function getBlueprint(FormaAddon $addon): Blueprint
     {
         $path = Path::assemble($addon->statamicAddon()->directory(), 'resources', 'blueprints', 'config.yaml');
 
-        return BlueprintAPI::makeFromFields(YAML::file($path)->parse());
+        $yaml = YAML::file($path)->parse();
+
+        if ($yaml['tabs'] ?? false) {
+            return BlueprintAPI::make()->setContents($yaml);
+        }
+
+        return BlueprintAPI::makeFromFields($yaml);
     }
 
     protected function postProcess(array $values): array
@@ -69,5 +74,20 @@ class ConfigController extends Controller
     protected function preProcess(string $handle): array
     {
         return config(Forma::findBySlug($handle)->configHandle());
+    }
+
+    public static function cpIcon()
+    {
+        return 'settings-horizontal';
+    }
+
+    public static function cpSection()
+    {
+        return __('Settings');
+    }
+
+    private function cpTitle(FormaAddon $addon)
+    {
+        return __(':name Settings', ['name' => $addon->statamicAddon()->name()]);
     }
 }

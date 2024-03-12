@@ -1,10 +1,10 @@
 @extends('statamic::layout')
 
-@section('title', __('Config'))
+@section('title', $title)
 
 @section('content')
     <publish-form
-        title='Configuration'
+        title='{{ $title }}'
         action={{ $route }}
         :blueprint='@json($blueprint)'
         :meta='@json($meta)'

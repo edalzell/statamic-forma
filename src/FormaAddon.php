@@ -8,6 +8,7 @@ use Statamic\Extend\Addon;
 use Statamic\Facades\Addon as AddonFacade;
 use Statamic\Facades\Blink;
 use Statamic\Facades\CP\Nav as NavFacade;
+use Statamic\Facades\Permission;
 use Statamic\Statamic;
 
 class FormaAddon
@@ -21,7 +22,10 @@ class FormaAddon
 
     public function boot()
     {
-        $this->bootNav()->registerRoutes();
+        $this
+            ->bootNav()
+            ->bootPermissions()
+            ->registerRoutes();
     }
 
     public function configHandle(): string
@@ -40,17 +44,32 @@ class FormaAddon
             return $this;
         }
 
+        $controllerInstance = app($this->controller);
+
         NavFacade::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
-            ->section('Settings')
-            ->can('manage addon settings')
+            ->section($controllerInstance::cpSection())
+            ->can('manage '.$addon->slug().' settings')
             ->route($addon->slug().'.config.edit')
-            ->icon('settings-horizontal'));
+            ->icon($controllerInstance::cpIcon())
+        );
 
         return $this;
     }
 
-    private function registerRoutes()
+    private function bootPermissions(): self
+    {
+        if (! $addon = $this->statamicAddon()) {
+            return $this;
+        }
+
+        Permission::register('manage '.$addon->slug().' settings')
+            ->label('Manage '.$addon->name().' Settings');
+
+        return $this;
+    }
+
+    private function registerRoutes(): self
     {
         if (is_null($addon = $this->statamicAddon())) {
             return $this;
@@ -62,5 +81,7 @@ class FormaAddon
                 Route::post('update', [$this->controller, 'update'])->name('update');
             });
         }));
+
+        return $this;
     }
 }
