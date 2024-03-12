@@ -52,7 +52,7 @@ class ConfigController extends Controller
 
         ConfigWriter::writeMany($addon->configHandle(), $data);
 
-        ConfigSaved::dispatch($data, $addon);
+        ConfigSaved::dispatch($data, $addon->statamicAddon());
     }
 
     private function getBlueprint(FormaAddon $addon): Blueprint
