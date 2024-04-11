@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.0 - 2024-04-11
+
+### 🚀 New
+
+- Support Statamic 5, require Proteus v3.0, drop Laravel 9 [@edalzell](https://github.com/edalzell) (#23)
+
 ## v2.2.0 - 2024-04-10
 
 ### 🚀 New
