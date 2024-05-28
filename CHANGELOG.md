@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.0.1 - 2024-05-28
+
+### 🐛 Fixed
+
+- Update Proteus version [@edalzell](https://github.com/edalzell) (#24)
+
 ## v3.0 - 2024-04-11
 
 ### 🚀 New
