@@ -5,73 +5,83 @@ namespace Edalzell\Forma;
 use Illuminate\Support\Facades\Route;
 use Statamic\CP\Navigation\Nav;
 use Statamic\Extend\Addon;
-use Statamic\Facades\Addon as AddonAPI;
+use Statamic\Facades\Addon as AddonFacade;
 use Statamic\Facades\Blink;
-use Statamic\Facades\CP\Nav as NavAPI;
+use Statamic\Facades\CP\Nav as NavFacade;
 use Statamic\Facades\Permission;
 use Statamic\Statamic;
 
 class FormaAddon
 {
-    private string $addon;
-    private string $controller;
-
-    public function __construct(string $package, ?string $controller)
-    {
-        $this->addon = $package;
-        $this->controller = $controller ?: ConfigController::class;
+    public function __construct(
+        private string $package,
+        private ?string $controller = ConfigController::class,
+        private ?string $config = null
+    ) {
     }
 
-    public function boot()
+    public function boot(): void
     {
-        $this->bootNav();
-        $this->bootPermissions();
-        $this->registerRoutes();
+        $this
+            ->bootNav()
+            ->bootPermissions()
+            ->registerRoutes();
     }
 
-    private function bootNav()
+    public function configHandle(): string
     {
-        if (! $addon = $this->getAddon()) {
-            return;
+        return $this->config ?? $this->statamicAddon()->slug();
+    }
+
+    public function statamicAddon(): ?Addon
+    {
+        return Blink::once($this->package, fn () => AddonFacade::get($this->package));
+    }
+
+    private function bootNav(): self
+    {
+        if (! $addon = $this->statamicAddon()) {
+            return $this;
         }
 
         $controllerInstance = app($this->controller);
 
-        NavAPI::extend(fn (Nav $nav) => $nav
+        NavFacade::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
             ->section($controllerInstance::cpSection())
             ->can('manage '.$addon->slug().' settings')
-            ->route($addon->slug() . '.config.edit')
+            ->route($addon->slug().'.config.edit')
             ->icon($controllerInstance::cpIcon())
         );
+
+        return $this;
     }
 
-    private function bootPermissions()
+    private function bootPermissions(): self
     {
-        if (! $addon = $this->getAddon()) {
-            return;
+        if (! $addon = $this->statamicAddon()) {
+            return $this;
         }
 
         Permission::register('manage '.$addon->slug().' settings')
             ->label('Manage '.$addon->name().' Settings');
+
+        return $this;
     }
 
-    private function getAddon(): ?Addon
+    private function registerRoutes(): self
     {
-        return Blink::once($this->addon, fn () => AddonAPI::get($this->addon));
-    }
-
-    private function registerRoutes()
-    {
-        if (! $addon = $this->getAddon()) {
-            return;
+        if (is_null($addon = $this->statamicAddon())) {
+            return $this;
         }
 
-        Statamic::pushCpRoutes(fn () => Route::name($addon->slug())->prefix($addon->slug())->group(function () {
-            Route::name('.config.')->prefix('config')->group(function () {
+        Statamic::pushCpRoutes(fn () => Route::name($addon->slug().'.')->prefix($addon->slug())->group(function () {
+            Route::name('config.')->prefix('config')->group(function () {
                 Route::get('edit', [$this->controller, 'edit'])->name('edit');
                 Route::post('update', [$this->controller, 'update'])->name('update');
             });
         }));
+
+        return $this;
     }
 }
