@@ -2,6 +2,29 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.0.1 - 2024-05-28
+
+### 🐛 Fixed
+
+- Update Proteus version [@edalzell](https://github.com/edalzell) (#24)
+
+## v3.0 - 2024-04-11
+
+### 🚀 New
+
+- Support Statamic 5, require Proteus v3.0, drop Laravel 9 [@edalzell](https://github.com/edalzell) (#23)
+
+## v2.2.0 - 2024-04-10
+
+### 🚀 New
+
+- Laravel 11.x Compatibility [@laravel-shift](https://github.com/laravel-shift) (#19)
+
+### 🐛 Fixed
+
+- It’s rad pack now [@edalzell](https://github.com/edalzell) (#22)
+- Update GH Action [@edalzell](https://github.com/edalzell) (#21)
+
 ## v2.1 - 2023-07-18
 
 ### 🚀 New
