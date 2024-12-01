@@ -30,7 +30,7 @@ Then, in the `bootAddon` method of your addon's Service Provider add:
 
 The second parameter is optional and only needed if you need custom config handling (see Extending below)
 
-There is a 3rd parameter `config` that used if, for some reason, the config file is NOT the addon's handle.
+There is a 3rd parameter `handle` you can use if the config file is NOT the addon's handle.
 
 Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` (or `$config` as per above) in the `config` folder.
 

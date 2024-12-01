@@ -13,9 +13,9 @@ class Addons
         $this->addons = collect();
     }
 
-    public function add(string $package, ?string $controller = null, ?string $config = null): void
+    public function add(string $package, ?string $controller = null, ?string $handle = null): void
     {
-        $this->addons->push(new FormaAddon($package, $controller, $config));
+        $this->addons->push(new FormaAddon($package, $controller, $handle));
     }
 
     public function findBySlug(string $slug): FormaAddon
