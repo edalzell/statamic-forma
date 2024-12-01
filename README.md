@@ -32,7 +32,7 @@ The second parameter is optional and only needed if you need custom config handl
 
 There is a 3rd parameter `handle` you can use if the config file is NOT the addon's handle.
 
-Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` (or `$config` as per above) in the `config` folder.
+Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` (or `$handle` as per above) in the `config` folder.
 
 ![menu item](https://raw.githubusercontent.com/edalzell/statamic-forma/main/images/mailchimp-menu.png)
 
