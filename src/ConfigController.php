@@ -3,8 +3,9 @@
 namespace Edalzell\Forma;
 
 use Edalzell\Forma\Events\ConfigSaved;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Statamic\Extend\Addon;
 use Statamic\Facades\Blueprint as BlueprintAPI;
 use Statamic\Facades\Path;
 use Statamic\Facades\YAML;
@@ -14,17 +15,15 @@ use Stillat\Proteus\Support\Facades\ConfigWriter;
 
 class ConfigController extends Controller
 {
-    public function edit(Request $request)
+    public function edit(Request $request): View|Factory
     {
         $slug = $request->segment(2);
 
-        $addon = Forma::findBySlug($slug);
-
-        $blueprint = $this->getBlueprint($addon);
+        $blueprint = $this->getBlueprint($addon = Forma::findBySlug($slug));
 
         $fields = $blueprint
             ->fields()
-            ->addValues($this->preProcess($slug))
+            ->addValues($this->preProcess($addon->statamicAddon()->slug()))
             ->preProcess();
 
         return view('forma::edit', [
@@ -36,13 +35,11 @@ class ConfigController extends Controller
         ]);
     }
 
-    public function update(Request $request)
+    public function update(Request $request): void
     {
         $slug = $request->segment(2);
 
-        $addon = Forma::findBySlug($slug);
-
-        $blueprint = $this->getBlueprint($addon);
+        $blueprint = $this->getBlueprint($addon = Forma::findBySlug($slug));
 
         // Get a Fields object, and populate it with the submitted values.
         $fields = $blueprint->fields()->addValues($request->all());
@@ -53,14 +50,14 @@ class ConfigController extends Controller
 
         $data = $this->postProcess($fields->process()->values()->toArray());
 
-        $write = ConfigWriter::writeMany($slug, $data);
+        ConfigWriter::writeMany($addon->configHandle(), $data);
 
-        ConfigSaved::dispatch($data, $addon);
+        ConfigSaved::dispatch($data, $addon->statamicAddon());
     }
 
-    private function getBlueprint(Addon $addon): Blueprint
+    private function getBlueprint(FormaAddon $addon): Blueprint
     {
-        $path = Path::assemble($addon->directory(), 'resources', 'blueprints', 'config.yaml');
+        $path = Path::assemble($addon->statamicAddon()->directory(), 'resources', 'blueprints', 'config.yaml');
 
         $yaml = YAML::file($path)->parse();
 
@@ -78,21 +75,21 @@ class ConfigController extends Controller
 
     protected function preProcess(string $handle): array
     {
-        return config($handle);
+        return config(Forma::findBySlug($handle)->configHandle());
     }
 
-    public static function cpIcon()
+    public static function cpIcon(): string
     {
         return 'settings-horizontal';
     }
 
-    public static function cpSection()
+    public static function cpSection(): string
     {
         return __('Settings');
     }
 
-    private function cpTitle(Addon $addon)
+    private function cpTitle(FormaAddon $addon): string
     {
-        return __(':name Settings', ['name' => $addon->name()]);
+        return __(':name Settings', ['name' => $addon->statamicAddon()->name()]);
     }
 }

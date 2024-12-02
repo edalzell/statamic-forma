@@ -23,14 +23,16 @@ The package will automatically register itself.
 
 First, create a `config.yaml` file in `resources\blueprints` that contains the blueprint for your configuration. As an example, see Mailchimp's, [here](https://github.com/statamic-rad-pack/mailchimp/blob/main/resources/blueprints/config.yaml).
 
-Then, in the `boot` method of your addon's Service Provider add:
+Then, in the `bootAddon` method of your addon's Service Provider add:
 ```php
-\Edalzell\Forma\Forma::add('silentz/mailchimp', ConfigController::class);
+\Edalzell\Forma\Forma::add('statamic-rad-pack/mailchimp', ConfigController::class);
 ```
 
 The second parameter is optional and only needed if you need custom config handling (see Extending below)
 
-Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` in the `config` folder.
+There is a 3rd parameter `handle` you can use if the config file is NOT the addon's handle.
+
+Once you do that, you get a menu item in the cp that your users can access and use. All data is saved into your `addon_handle.php` (or `$handle` as per above) in the `config` folder.
 
 ![menu item](https://raw.githubusercontent.com/edalzell/statamic-forma/main/images/mailchimp-menu.png)
 
