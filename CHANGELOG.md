@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.1.0 - 2024-12-02
+
+### 🚀 New
+
+- Ability to configure the config handle [@edalzell](https://github.com/edalzell) (#20)
+
 ## v3.0.1 - 2024-05-28
 
 ### 🐛 Fixed
