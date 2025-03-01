@@ -3,8 +3,6 @@ name: Release Drafter
 on:
   pull_request:
     types: [closed]
-permissions:
-  contents: read
 
 jobs:
   update_release_draft:
