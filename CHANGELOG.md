@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.1.1 - 2025-03-02
+
+### 🐛 Fixed
+
+- Handle null ConfigController properly [@edalzell](https://github.com/edalzell) (#28)
+
 ## v3.1.0 - 2024-12-02
 
 ### 🚀 New
