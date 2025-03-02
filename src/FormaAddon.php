@@ -15,10 +15,9 @@ class FormaAddon
 {
     public function __construct(
         private string $package,
-        private ?string $controller = ConfigController::class,
+        private ?string $controller,
         private ?string $config = null
-    ) {
-    }
+    ) {}
 
     public function boot(): void
     {
@@ -44,7 +43,7 @@ class FormaAddon
             return $this;
         }
 
-        $controllerInstance = app($this->controller);
+        $controllerInstance = app($this->controller ?? ConfigController::class);
 
         NavFacade::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
