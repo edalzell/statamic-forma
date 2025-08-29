@@ -13,11 +13,15 @@ use Statamic\Statamic;
 
 class FormaAddon
 {
+    private string $controller;
+
     public function __construct(
         private string $package,
-        private ?string $controller,
+        ?string $controller,
         private ?string $config = null
-    ) {}
+    ) {
+        $this->controller = $controller ?? ConfigController::class;
+    }
 
     public function boot(): void
     {
@@ -43,7 +47,7 @@ class FormaAddon
             return $this;
         }
 
-        $controllerInstance = app($this->controller ?? ConfigController::class);
+        $controllerInstance = app($this->controller);
 
         NavFacade::extend(fn (Nav $nav) => $nav
             ->content($addon->name())
