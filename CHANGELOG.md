@@ -2,6 +2,12 @@
 
 All notable changes to `statamic-forma` will be documented in this file.
 
+## v3.1.2 - 2025-08-29
+
+### 🐛 Fixed
+
+- Default the config controller properly [@edalzell](https://github.com/edalzell) (#30)
+
 ## v3.1.1 - 2025-03-02
 
 ### 🐛 Fixed
